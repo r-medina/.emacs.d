@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: if err fail
+# key: iferr3
+# --
+if err != nil {
+   t.Fatalf("unexpected error ${doing something}: %v", err)
+}

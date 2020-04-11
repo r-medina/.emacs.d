@@ -1,0 +1,15 @@
+.DS_Store
+auto-save-list
+backups/
+el-get/
+url/
+eshell/
+elpa/
+*.elc
+tramp
+ac-comphist.dat
+srecode-map.el
+request/
+abbrev_defs
+init.log
+semanticdb/

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: test equality
+# key: testeq
+# --
+if want, got := $1, $2; !reflect.DeepEqual(got, want) {
+	t.Fatalf("\nexpected (%T):\n%+v\ngot (%T):\n%+v", want, want, got, got)
+}

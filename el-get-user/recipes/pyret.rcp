@@ -1,0 +1,4 @@
+(:name pyret
+       :description "Pyret language Emacs mode"
+       :type http
+       :url "https://raw.githubusercontent.com/brownplt/pyret-lang/master/tools/emacs/pyret.el")

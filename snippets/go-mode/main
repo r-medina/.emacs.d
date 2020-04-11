@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: make main
+# key: main
+# --
+func main() {
+     $1
+}

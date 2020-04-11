@@ -1,0 +1,4 @@
+(:name slack
+       :description "emacs client for Slack"
+       :type github
+       :pkgname "yuya373/emacs-slack")

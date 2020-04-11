@@ -1,0 +1,4 @@
+(:name heaven-and-hell
+       :description "Change emacs themes between light and dark"
+       :type github
+       :pkgname "valignatev/heaven-and-hell")

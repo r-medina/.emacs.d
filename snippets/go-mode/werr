@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: wrap err
+# key: werr
+# --
+errors.Wrap(err, "${function name} failed")

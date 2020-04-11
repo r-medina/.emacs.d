@@ -1,0 +1,4 @@
+(:name auto-dark-emacs
+       :description "Change emacs theme with MacOS Dark mode"
+       :type github
+       :pkgname "LionyxML/auto-dark-emacs")
