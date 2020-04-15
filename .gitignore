@@ -13,3 +13,4 @@ request/
 abbrev_defs
 init.log
 semanticdb/
+.lsp-session*

@@ -1,6 +1,6 @@
 ;;; Ricky Medina's emacs config file
 
-;; 2018
+;; 2020
 
 ;; github.com/r-medina
 ;; ricky.medina91@gmail.com
@@ -46,7 +46,6 @@
 
 (setq my-packages
       '(ace-jump-mode
-        ;; auto-complete
         atom-dark-theme
         beacon
         bufler
@@ -55,7 +54,6 @@
         ;; diff-hl
         dockerfile-mode
         emacs-powerline
-        ;; el-get
         expand-region
         flycheck
         ;; flycheck-protobuf
@@ -69,8 +67,6 @@
         go-mode
         go-mod
         go-imports
-	;; go-company
-	
 	
         ;; golden-ratio
         helm
@@ -91,13 +87,11 @@
         yaml-mode
         yasnippet))
 
-;; (defalias 'javascript-mode 'js2-mode) ;; has to be here for initializations of other packages
 (ignore-errors (el-get-self-update)) ;; maybe bring this back?
 ;; (el-get-update-all)
 (el-get-cleanup my-packages) ;; deletes no-longer-listed packages
 
 (el-get 'sync my-packages)
-;; (mapcar '(lambda (package) (el-get-bundle package)) my-package-names)
 
 ;; add the user-contributed repository
 (add-to-list 'package-archives
@@ -465,7 +459,6 @@ With argument, do this that many times."
  '(c-basic-offset 8)
  '(clang-format-style
    "{BasedOnStyle: WebKit, IndentWidth: 8, AlignTrailingComments: true, PointerAlignment: Right, AlwaysBreakAfterDefinitionReturnType: true}")
- '(company-dabbrev-minimum-length 1)
  '(css-indent-offset 2)
  '(custom-safe-themes
    (quote
@@ -475,29 +468,9 @@ With argument, do this that many times."
  '(diff-hl-margin-mode t)
  '(dired-use-ls-dired (quote unspecified))
  '(electric-pair-mode t)
- '(erc-autojoin-mode t)
- '(erc-button-mode t)
- '(erc-fill-mode t)
- '(erc-irccontrols-mode t)
- '(erc-list-mode t)
- '(erc-match-mode t)
- '(erc-menu-mode t)
- '(erc-move-to-prompt-mode t)
- '(erc-netsplit-mode t)
- '(erc-networks-mode t)
- '(erc-nick "rxaxm")
- '(erc-noncommands-mode t)
- '(erc-pcomplete-mode t)
- '(erc-readonly-mode t)
- '(erc-ring-mode t)
- '(erc-stamp-mode t)
- '(erc-track-minor-mode t)
- '(erc-track-mode t)
- '(erc-track-position-in-mode-line t)
  '(fill-column 80)
  '(flycheck-display-errors-delay 1e-05)
  '(flymake-cursor-auto-enable t)
- '(global-company-mode t)
  '(hscroll-margin 8)
  '(hscroll-step 1)
  '(js2-basic-offset 2)
@@ -505,7 +478,7 @@ With argument, do this that many times."
  '(js2-strict-missing-semi-warning nil)
  '(package-selected-packages
    (quote
-    (company flycheck-protobuf protobuf-mode websocket web-beautify web w3 tt-mode stripe-buffer spotify smart-tabs-mode smart-mode-line-powerline-theme simple-httpd scss-mode request python-environment pylint projectile popup perl-completion packed oauth2 multi-term malabar-mode json-reformat javadoc-lookup ipython heroku haml-mode hackernews flymake-gjshint flymake-easy flymake-csslint flatland-theme epc emojify circe caml auto-dim-other-buffers anything alert airline-themes ace-jump-mode)))
+    (flycheck-protobuf protobuf-mode websocket web-beautify web w3 tt-mode stripe-buffer spotify smart-tabs-mode simple-httpd scss-mode request python-environment pylint projectile popup perl-completion packed oauth2 multi-term malabar-mode json-reformat javadoc-lookup ipython heroku haml-mode hackernews flymake-gjshint flymake-easy flymake-csslint flatland-theme epc emojify circe caml auto-dim-other-buffers anything alert airline-themes ace-jump-mode)))
  '(perl-tab-always-indent nil)
  '(recenter-positions (quote (top middle bottom)))
  '(safe-local-variable-values (quote ((require-final-newline . t))))
