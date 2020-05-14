@@ -50,7 +50,7 @@
         beacon
         bufler
         company-mode
-	company-lsp
+        company-lsp
         ;; diff-hl
         dockerfile-mode
         emacs-powerline
@@ -60,6 +60,7 @@
         flymake
         flymake-cursor
         flymake-shell
+	forge
         git-link
 
         ;;; go shit
@@ -67,9 +68,11 @@
         go-mode
         go-mod
         go-imports
-	
+
         ;; golden-ratio
+        hcl-mode
         helm
+        helm-projectile
         ;; hl-line+
         json-mode
         lsp-mode
@@ -409,10 +412,12 @@ With argument, do this that many times."
     (define-key m (kbd "C-u")   'magit-status)                 ; magit!
     (define-key m (kbd "C-t")   'comment-or-uncomment-region)  ; comment region
     (define-key m (kbd "M-P")   'package-list-packages)        ; listing packages
+    (define-key m (kbd "M-E")   'el-get-list-packages)         ; listing packages
     (define-key m (kbd "M-S")   'shell)                        ; open shell
     (define-key m (kbd "C-c r") 'reload-file)                  ; reload file
     (define-key m (kbd "C-c c") 'my-clean)                     ; cleaning function
     (define-key m (kbd "C-c b") 'beacon-blink)
+    (define-key m (kbd "C-c p") 'helm-projectile)
     ;; (define-key m (kbd "C-c t") 'heaven-and-hell-toggle-theme) ; toggle theme
 
     (define-key m (kbd "C-c . e")       ; open .emacs
