@@ -1,0 +1,4 @@
+(:name org-roam
+       :description "A Web Application to Visualize the Org-Roam Database"
+       :type github
+       :pkgname "org-roam/org-roam")
