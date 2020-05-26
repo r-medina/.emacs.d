@@ -1,0 +1,10 @@
+(:name org-mode
+       :description "Org-mode is for keeping notes, maintaining ToDo lists, doing project planning, and authoring with a fast and effective plain-text system."
+       :type github
+       :pkgname "bzg/org-mode"
+       :build `,(mapcar
+                 (lambda (target)
+                   (list "make" target (concat "EMACS=" (shell-quote-argument el-get-emacs))))
+                 '("oldorg"))
+       :load-path ("." "contrib/lisp" "lisp")
+       :load ("lisp/org-loaddefs.el"))

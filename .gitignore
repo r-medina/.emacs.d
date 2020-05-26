@@ -16,3 +16,4 @@ semanticdb/
 .lsp-session*
 forge-database.sqlite
 recentf
+bookmarks

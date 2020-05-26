@@ -81,12 +81,17 @@
         ;; magit-tramp
         markdown-mode
         ;; multi-web-mode
+	org-mode
+	org-bullets
+	org-roam
+	org-roam-server
         paredit
         pbcopy
         plantuml-mode
         ;; protobuf-mode
         rainbow-delimiters
-        switch-window
+	simple-httpd
+	switch-window
         yaml-mode
         yasnippet))
 
@@ -117,6 +122,10 @@
 
 ;;; end exp
 
+;; fixes dired issue on startup
+(if (eq system-type 'darwin)
+    (setq insert-directory-program "gls" dired-use-ls-dired t))
+
 (turn-on-pbcopy)
 
 ;; utf-8 for correct behavior in terminal
@@ -143,6 +152,7 @@
 
 ;; faster tramp
 (setq tramp-default-method "ssh")
+(customize-set-variable 'tramp-syntax 'simplified)
 
 ;; (add-hook 'find-file-hook 'turn-on-visual-line-mode)
 ;; (add-hook 'find-file-hook 'diff-hl-mode)
@@ -213,6 +223,10 @@ With argument, do this that many times."
 ;;     (add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))
 ;;     (add-hook 'malabar-mode-hook 'auto-complete-mode)))
 
+;; org-roam
+;; from https://org-roam.github.io/org-roam/manual/Getting-Started.html#Getting-Started
+(add-hook 'after-init-hook 'org-roam-mode)
+
 ;; scala
 (add-hook 'scala-mode-hook 'auto-complete-mode)
 
@@ -269,7 +283,7 @@ With argument, do this that many times."
 
 ;;; III. Look
 
-;; (beacon-mode 1)
+(beacon-mode 1)
 
 ;; theme
 
@@ -309,13 +323,6 @@ With argument, do this that many times."
 (setq scroll-conservatively 10000)
 (setq auto-window-vscroll nil)
 
-;; turn on stripe-buffer-mode
-;; (add-hook 'dired-mode-hook 'stripe-listify-buffer)
-;; (add-hook 'find-file-hook 'hl-line-mode)
-;; (add-hook 'stripe-buffer-mode-hook 'hl-line-mode)
-;; (add-hook 'find-file-hook 'stripe-buffer-mode)
-
-
 ;;; IV.  Key bindings
 
 ;; (global-unset-key (kbd "C-q"))
@@ -331,14 +338,6 @@ With argument, do this that many times."
 
 (global-set-key (kbd "<M-DEL>") 'backward-delete-word)
 (global-set-key (kbd "C-c l") 'git-link)
-
-;; spotify stuffs
-;; (define-prefix-command 'spotify-map)
-;; (let ((m spotify-map))
-;;   (define-key m (kbd "j")   'spotify-previous)
-;;   (define-key m (kbd "k")   'spotify-next)
-;;   (define-key m (kbd "p")   'spotify-notif)
-;;   (define-key m (kbd "SPC") 'spotify-playpause))
 
 ;; buffer navigation
 (setq windmove-wrap-around t)
@@ -362,7 +361,7 @@ With argument, do this that many times."
   (define-key m (kbd "p") 'paredit-mode)
   (define-key m (kbd "o") 'outline-minor-mode)
   ;; (define-key m (kbd "d") 'dim-others-mode)
-  (define-key m (kbd "d") 'diff-hl-mode)
+  ;; (define-key m (kbd "d") 'diff-hl-mode)
   (define-key m (kbd "a") 'auto-complete-mode)
   (define-key m (kbd "v") 'visual-line-mode)
   (define-key m (kbd "t") 'toggle-truncate-lines))
@@ -407,6 +406,7 @@ With argument, do this that many times."
 ;; defining a minor mode for all my keys!!
 ;; stolen from: http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs
 (defvar my-keys-minor-mode-map
+  ;; try make-sparse-keymap instead
   (let ((m (make-keymap)))
     (define-key m (kbd "C-j")   'ace-jump-mode)                ; jump to word with PREFIX
     (define-key m (kbd "C-u")   'magit-status)                 ; magit!
@@ -429,6 +429,8 @@ With argument, do this that many times."
       (lambda () (interactive) (find-file "~/.oh-my-zsh")))
     (define-key m (kbd "C-c . b")       ; open .bashrc
       (lambda () (interactive) (find-file "~/.bashrc")))
+    (define-key m (kbd "C-c . i")       ; open init folder
+      (lambda () (interactive) (find-file "~/.emacs.d/el-get-user/init")))
     (define-key m (kbd "C-c . p")       ; open .profile
       (lambda () (interactive) (find-file "~/.profile")))
 
@@ -481,6 +483,7 @@ With argument, do this that many times."
  '(js2-basic-offset 2)
  '(js2-highlight-level 3)
  '(js2-strict-missing-semi-warning nil)
+ '(org-agenda-files (quote ("~/notes/2020-05-25.org")))
  '(package-selected-packages
    (quote
     (flycheck-protobuf protobuf-mode websocket web-beautify web w3 tt-mode stripe-buffer spotify smart-tabs-mode simple-httpd scss-mode request python-environment pylint projectile popup perl-completion packed oauth2 multi-term malabar-mode json-reformat javadoc-lookup ipython heroku haml-mode hackernews flymake-gjshint flymake-easy flymake-csslint flatland-theme epc emojify circe caml auto-dim-other-buffers anything alert airline-themes ace-jump-mode)))
@@ -488,6 +491,8 @@ With argument, do this that many times."
  '(recenter-positions (quote (top middle bottom)))
  '(safe-local-variable-values (quote ((require-final-newline . t))))
  '(switch-window-relative nil)
+ '(tramp-default-method "ssh")
+ '(tramp-syntax (quote simplified) nil (tramp))
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
