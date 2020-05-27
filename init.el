@@ -60,10 +60,9 @@
         flymake
         flymake-cursor
         flymake-shell
-	forge
+        flyspell
+        forge
         git-link
-
-        ;;; go shit
 
         go-mode
         go-mod
@@ -81,17 +80,17 @@
         ;; magit-tramp
         markdown-mode
         ;; multi-web-mode
-	org-mode
-	org-bullets
-	org-roam
-	org-roam-server
+        org-mode
+        org-bullets
+        org-roam
+        org-roam-server
         paredit
         pbcopy
         plantuml-mode
         ;; protobuf-mode
         rainbow-delimiters
-	simple-httpd
-	switch-window
+        simple-httpd
+        switch-window
         yaml-mode
         yasnippet))
 
@@ -332,9 +331,9 @@ With argument, do this that many times."
 ;; (local-unset-key (kbd "a"))
 ;; (local-unset-key (kbd "e"))
 
-;; ibuffer
+;; buffer views
 (global-unset-key (kbd "C-x C-b"))
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'helm-multi-files)
 
 (global-set-key (kbd "<M-DEL>") 'backward-delete-word)
 (global-set-key (kbd "C-c l") 'git-link)
@@ -433,6 +432,9 @@ With argument, do this that many times."
       (lambda () (interactive) (find-file "~/.emacs.d/el-get-user/init")))
     (define-key m (kbd "C-c . p")       ; open .profile
       (lambda () (interactive) (find-file "~/.profile")))
+    (define-key m (kbd "C-c . j")       ; open Joe zoom
+      (lambda () (interactive)
+        (browse-url (getenv "JOE_ZOOM"))))
 
     (define-key m (kbd "C-n") nav-map)         ; navigation prefix
     (define-key m (kbd "C-o") outline-map)     ; outline prefix

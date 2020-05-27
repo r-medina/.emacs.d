@@ -17,3 +17,4 @@ semanticdb/
 forge-database.sqlite
 recentf
 bookmarks
+transient/
