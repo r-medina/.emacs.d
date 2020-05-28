@@ -1,0 +1,142 @@
+#+TITLE: Emacs Config
+#+AUTHOR: Ricky Medina
+#+DATE: 2020-05-27
+
+After getting to know org-mode, I am starting the process of moving more and
+more of my life onto it.
+
+I've had my [[file:../notes/20200526192638-emacs.org][emacs]] config all over the place for the last 10 years, but this is
+an attempt to get it documented and in one place.
+
+* [[https://github.com/dimitri/el-get][=el-get=]]
+
+  I discovered a little while ago. At this point, I'm not sure it's the best way
+  to handle package management in emacs, but I don't hate it. =el-get= let's me
+  list and configure the packages I want really easily. I can also add new
+  recipes not already in the repo.
+
+  These are the packages I want in my emacs:
+  #+begin_src emacs-lisp
+    (setq my-packages
+	  '(ace-jump-mode
+	    atom-dark-theme
+	    beacon
+	    bufler
+	    company-mode
+	    company-lsp
+	    ;; diff-hl
+	    dockerfile-mode
+	    emacs-powerline
+	    expand-region
+	    flycheck
+	    ;; flycheck-protobuf
+	    flymake
+	    flymake-cursor
+	    flymake-shell
+	    flyspell
+	    forge
+	    git-link
+
+	    go-mode
+	    go-mod
+	    go-imports
+
+	    ;; golden-ratio
+	    hcl-mode
+	    heaven-and-hell
+	    helm
+	    helm-projectile
+	    ;; hl-line+
+	    json-mode
+	    lsp-mode
+	    lsp-ui
+	    magit
+	    ;; magit-tramp
+	    markdown-mode
+	    ;; multi-web-mode
+	    org-mode
+	    org-bullets
+	    org-roam
+	    org-roam-server
+	    paredit
+	    pbcopy
+	    plantuml-mode
+	    protobuf-mode
+	    rainbow-delimiters
+	    simple-httpd
+	    smart-mode-line
+	    switch-window
+	    yaml-mode
+	    yasnippet))
+  #+end_src
+
+  This is how I install and configure =el-get=:
+  #+begin_src emacs-lisp
+    (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+    (unless (require 'el-get nil 'noerror)
+      (with-current-buffer
+	  (url-retrieve-synchronously
+	   "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+	(goto-char (point-max))
+	(eval-print-last-sexp)))
+
+    ;; my own recipes that I haven't upstreamed
+    (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes/")
+    ;; this is where the config for individual packages go
+    (setq el-get-user-package-directory "~/.emacs.d/el-get-user/init/")
+
+    (ignore-errors (el-get-self-update))
+    ;; this only needs to run occasionally, as it takes long
+    ;; (el-get-update-all)
+    (el-get-cleanup my-packages) ;; deletes no-longer-listed packages
+
+    (el-get 'sync my-packages)
+  #+end_src
+
+* General
+
+** Keep the backups in a sane location rather than adding a bunch of files to every
+   directory:
+   #+begin_src emacs-lisp
+     (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+     (setq backup-by-copying t)
+   #+end_src
+
+** And not that I'm writing too much elisp, but just in case:
+   #+begin_src emacs-lisp
+     (add-to-list 'load-path "~/.emacs.d/usr")
+   #+end_src
+
+** Setting up the official emacs package managers
+   #+begin_src emacs-lisp
+     (require 'package)
+
+     ;; add the user-contributed repository
+     (add-to-list 'package-archives
+		  '("marmalade" . "http://marmalade-repo.org/packages/"))
+     (add-to-list 'package-archives
+		  '("melpa" . "http://melpa.milkbox.net/packages/"))
+     (package-initialize)
+   #+end_src
+
+** Fix =dired= issue on mac:
+   #+begin_src emacs-lisp
+     (if (eq system-type 'darwin)
+	 (setq insert-directory-program "gls" dired-use-ls-dired t))
+   #+end_src
+
+** so =M-<Backspace>= doesn't yank:
+   #+begin_src emacs-lisp
+     (defun delete-word (arg)
+       "Delete characters forward until encountering the end of a
+     word. With argument, do this that many times."
+       (interactive "p")
+       (delete-region (point) (progn (forward-word arg) (point))))
+
+     (defun backward-delete-word (arg)
+       "Delete characters backward until encountering the end of a word.
+     With argument, do this that many times."
+       (interactive "p")
+       (delete-word (- arg)))
+   #+end_src

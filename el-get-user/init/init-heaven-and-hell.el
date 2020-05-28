@@ -4,8 +4,9 @@
 ;; default light is emacs default theme, default dark is wombat
 ;; Themes can be the list: (dark . (tsdh-dark tango-dark))
 (setq heaven-and-hell-themes
-      '((light . tdsh-light)
-        (dark . wombat)))
+      '((light . tango)
+        (dark . atom-dark)))
+
 ;; Optionall, load themes without asking for confirmation.
 (setq heaven-and-hell-load-theme-no-confirm t)
 

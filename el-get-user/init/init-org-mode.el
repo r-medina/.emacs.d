@@ -12,3 +12,4 @@
 (setq org-agenda-files (list "~/notes"))
 
 (add-hook 'org-mode-hook 'flyspell-mode)
+(require 'org-tempo)

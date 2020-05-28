@@ -1,3 +1,12 @@
+;; (require 'org)
+;; (org-babel-load-file "~/.emacs.d/README.org")
+
+;;; this file is going to be deprecated for README.org, until then however I'm
+;;; keeping this to help me document and structure the literate configuration.
+
+;;;; OLD
+
+
 ;;; Ricky Medina's emacs config file
 
 ;; 2020
@@ -18,18 +27,12 @@
 
 ;;; I.  Essentials
 
-;; common lisp
-(require 'cl)
-
 ;; adds my stuff to load path
 (add-to-list 'load-path "~/.emacs.d/usr")
 
 ;; save backups elsewhere
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq backup-by-copying t)
-
-;; emacs package manager
-(require 'package)
 
 ;; giving el-get a shot
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
@@ -70,6 +73,7 @@
 
         ;; golden-ratio
         hcl-mode
+	heaven-and-hell
         helm
         helm-projectile
         ;; hl-line+
@@ -87,11 +91,13 @@
         paredit
         pbcopy
         plantuml-mode
-        ;; protobuf-mode
+	protobuf-mode
         rainbow-delimiters
         simple-httpd
+	;; smart-mode-line
         switch-window
         yaml-mode
+	yascroll
         yasnippet))
 
 (ignore-errors (el-get-self-update)) ;; maybe bring this back?
@@ -99,6 +105,9 @@
 (el-get-cleanup my-packages) ;; deletes no-longer-listed packages
 
 (el-get 'sync my-packages)
+
+;; emacs package manager
+(require 'package)
 
 ;; add the user-contributed repository
 (add-to-list 'package-archives
@@ -108,16 +117,16 @@
 (package-initialize)
 
 ;; exp
-(setq package-list '(smart-mode-line))
+;; (setq package-list '(smart-mode-line))
 
                                         ; fetch the list of packages available
 ;; (unless package-archive-contents
 ;;   (package-refresh-contents))
 
                                         ; install the missing packages
-(dolist (package package-list)
-  (unless (package-installed-p package)
-    (package-install package)))
+;; (dolist (package package-list)
+;;   (unless (package-installed-p package)
+;;     (package-install package)))
 
 ;;; end exp
 
@@ -174,7 +183,7 @@
   (interactive)
   (setq end (point-max))
   "does some cleaning up of files"
-  (untabify 0 end)
+;;   (untabify 0 end)
   (indent-region 0 end)
   (delete-trailing-whitespace 0 end))
 
@@ -186,15 +195,7 @@
     (set-window-vscroll nil curr-scroll)
     (message "Reloaded file")))
 
-;; spotify
-
-;; (defun spotify-notif ()
-;;   (interactive)
-;;   (call-process-shell-command "spotifyNotif" nil 0))
-
-;; (require 'spotify)
-
-;; so M-DEL doesn't yank
+;; so M-<Backspace> doesn't yank
 (defun delete-word (arg)
   "Delete characters forward until encountering the end of a
 word. With argument, do this that many times."
@@ -225,6 +226,7 @@ With argument, do this that many times."
 ;; org-roam
 ;; from https://org-roam.github.io/org-roam/manual/Getting-Started.html#Getting-Started
 (add-hook 'after-init-hook 'org-roam-mode)
+(setq org-agenda-files (list "~/notes"))
 
 ;; scala
 (add-hook 'scala-mode-hook 'auto-complete-mode)
@@ -282,11 +284,19 @@ With argument, do this that many times."
 
 ;;; III. Look
 
+;; http://kb.mit.edu/confluence/display/istcontrib/Disabling+the+Emacs+menubar%2C+toolbar%2C+or+scrollbar
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
 (beacon-mode 1)
 
 ;; theme
 
-(load-theme 'atom-dark t)
+(setq my-dark-theme 'atom-dark)
+(setq my-light-theme 'tsdh-light)
+
+;; (load-theme 'atom-dark t)
 
 ;; column-number-mode
 (column-number-mode t)
@@ -297,9 +307,9 @@ With argument, do this that many times."
 (set-default 'truncate-lines t)
 
 ;; prettier mode-line
-(require 'smart-mode-line)
-(if after-init-time (sml/setup)
-  (add-hook 'after-init-hook 'sml/setup))
+;; (require 'smart-mode-line)
+;; (if after-init-time (sml/setup)
+;;   (add-hook 'after-init-hook 'sml/setup))
 
 ;; linum mode!
 ;; (global-linum-mode t)
@@ -417,7 +427,7 @@ With argument, do this that many times."
     (define-key m (kbd "C-c c") 'my-clean)                     ; cleaning function
     (define-key m (kbd "C-c b") 'beacon-blink)
     (define-key m (kbd "C-c p") 'helm-projectile)
-    ;; (define-key m (kbd "C-c t") 'heaven-and-hell-toggle-theme) ; toggle theme
+    (define-key m (kbd "C-c T") 'heaven-and-hell-toggle-theme) ; toggle theme
 
     (define-key m (kbd "C-c . e")       ; open .emacs
       ;; does this need interactive?
@@ -469,6 +479,7 @@ With argument, do this that many times."
  '(clang-format-style
    "{BasedOnStyle: WebKit, IndentWidth: 8, AlignTrailingComments: true, PointerAlignment: Right, AlwaysBreakAfterDefinitionReturnType: true}")
  '(css-indent-offset 2)
+ '(custom-enabled-themes (quote (atom-dark)))
  '(custom-safe-themes
    (quote
     ("319bf1bab5d05e3a4c4a165efe69d27b3d975759034074f15fe61e92c7304884" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "e56f1b1c1daec5dbddc50abd00fcd00f6ce4079f4a7f66052cf16d96412a09a9" "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
@@ -485,7 +496,6 @@ With argument, do this that many times."
  '(js2-basic-offset 2)
  '(js2-highlight-level 3)
  '(js2-strict-missing-semi-warning nil)
- '(org-agenda-files (quote ("~/notes/2020-05-25.org")))
  '(package-selected-packages
    (quote
     (flycheck-protobuf protobuf-mode websocket web-beautify web w3 tt-mode stripe-buffer spotify smart-tabs-mode simple-httpd scss-mode request python-environment pylint projectile popup perl-completion packed oauth2 multi-term malabar-mode json-reformat javadoc-lookup ipython heroku haml-mode hackernews flymake-gjshint flymake-easy flymake-csslint flatland-theme epc emojify circe caml auto-dim-other-buffers anything alert airline-themes ace-jump-mode)))
@@ -505,4 +515,6 @@ With argument, do this that many times."
  '(ahs-edit-mode-face ((t (:background "Coral3"))))
  '(ahs-face ((t (:background "white"))))
  '(ahs-plugin-bod-face ((t (:background "DodgerBlue"))))
- '(ahs-plugin-defalt-face ((t (:background "brightwhite" :underline t)))))
+ '(ahs-plugin-defalt-face ((t (:background "brightwhite" :underline t))))
+ '(flyspell-duplicate-face ((t (:underline "chartreuse2" :weight bold))))
+ '(flyspell-incorrect-face ((t (:underline "dark red" :weight bold)))))
