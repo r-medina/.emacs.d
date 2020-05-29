@@ -1,3 +1,4 @@
+(require 'org-roam)
 (setq org-roam-directory "~/notes")
 
 (defvar org-roam-mode-map

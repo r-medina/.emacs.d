@@ -1,3 +1,4 @@
+(require 'heaven-and-hell)
 (setq heaven-and-hell-theme-type 'dark)
 
 ;; Set preferred light and dark themes

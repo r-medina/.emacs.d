@@ -1,4 +1,4 @@
-#+TITLE: Emacs Config
+#+TITLE: emacs config
 #+AUTHOR: Ricky Medina
 #+DATE: 2020-05-27
 
@@ -126,7 +126,8 @@ an attempt to get it documented and in one place.
 	 (setq insert-directory-program "gls" dired-use-ls-dired t))
    #+end_src
 
-** so =M-<Backspace>= doesn't yank:
+** so =M-<Backspace>= doesn't yank
+*** [[https://www.emacswiki.org/emacs/BackwardDeleteWord][source]]:
    #+begin_src emacs-lisp
      (defun delete-word (arg)
        "Delete characters forward until encountering the end of a
@@ -140,3 +141,4 @@ an attempt to get it documented and in one place.
        (interactive "p")
        (delete-word (- arg)))
    #+end_src
+

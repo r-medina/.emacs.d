@@ -34,6 +34,211 @@
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq backup-by-copying t)
 
+;; getting packages right
+
+(eval-when-compile
+  ;; Following line is not needed if use-package.el is in ~/.emacs.d
+  (add-to-list 'load-path "<path where use-package is installed>")
+  (require 'use-package))
+
+(use-package ace-jump-mode
+	     :bind ("C-j" . ace-jump-mode))
+
+(use-package atom-dark-theme)
+
+(use-package beacon
+	     :bind
+	     ("C-m b" . beacon-blink)
+	     :init
+	     (beacon-mode 1))
+
+(use-package chrome.el
+	     :bind
+	     (:map chrome-mode-map
+		   ("M-r" . chrome-mark-tab)))
+
+(use-package company-mode
+	     :init
+	     (add-hook 'after-init-hook #'global-company-mode) ;; TODO: does it need the #?
+
+	     (setq company-idle-delay 1)
+	     ;; starts completing after a single character instead of 3
+	     (setq company-minimum-prefix-length 1)
+	     ;; aligns fields in completions
+	     (setq company-tooltip-align-annotations t)
+	     (setq company-global-modes '(not markdown-mode)))
+(use-package company-lsp)
+
+(use-package diff-hl
+	     :init
+	     (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
+	     (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+
+	     (add-hook 'diff-hl-mode-hook 'diff-hl-flydiff-mode)
+	     (add-hook 'diff-hl-mode-hook 'diff-hl-margin-mode)
+	     (global-diff-hl-mode))
+
+(use-package dockerfile-mode)
+
+(use-package emacs-powerline) ;; TODO: am i using this?
+
+(use-package expand-region) ;; TODO: am i using this?
+
+(use-package flycheck)
+
+(use-package flyspell)
+
+(use-package forge)
+
+(use-package git-link
+	     :bind
+	     ("C-m l" . git-link))
+
+(use-package go-mode
+	     :init
+	     (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+	     :hook
+	     (go-mode . 'flycheck-mode)
+	     (go-mode . 'lsp-deferred))
+(use-package go-mod)
+(use-package go-imports)
+
+(use-package golden-ratio
+	     :init
+	     (golden-ratio-mode 1))
+
+(use-package hcl-mode
+	     :init
+	     (add-to-list 'auto-mode-alist '("\\.hcl.ctmpl\\'" . hcl-mode)))
+
+(use-package heaven-and-hell
+	     :init
+	     (add-hook 'after-init-hook 'heaven-and-hell-init-hook)
+	     :config
+	     (setq heaven-and-hell-themes
+		   '((light . tango)
+		     (dark . atom-dark)))
+	     (setq heaven-and-hell-load-theme-no-confirm t))
+
+(use-package helm
+	     :init
+	     (helm-mode 1) ;; TODO: do i need this?
+	     :bind
+	     (("M-x" . helm-M-x)
+	      ("C-x C-f" helm-find-files)
+	      :map helm-find-files-map
+	      ;; TODO: look into \t vs <tab> vs TAB
+	      ("\t" . 'helm-execute-persistent-action)))
+(use-package helm-projectile)
+
+(use-package json-mode) ;; init in el-get
+
+(use-package lsp-mode)
+(use-package lsp-ui)
+
+(use-package magit)
+
+(use-package markdown-mode
+	     :init
+	     (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
+
+(use-package org-mode
+	     :config
+	     (setq org-ellipsis "↩")
+	     (setq org-todo-keywords
+		   '((sequence "TODO" "IN PROGRESS" "WAITING" "|" "DONE")
+		     (sequence "MAYBE")))
+	     (setq org-directory "~/notes")
+	     (setq org-agenda-files (list "~/notes"))
+	     (require 'org-tempo)
+	     (setq org-tag-alist '(("work" . ?w)
+				   ("health" . ?h)
+				   ("family" . ?f)
+				   ("personal" . ?p)
+				   ("engineering-success" . ?e)))
+
+	     :hook
+	     (org-mode . 'flyspell-mode))
+(use-package org-bullets)
+
+(use-package org-roam
+	     :config
+	     (setq org-roam-directory "~/notes")
+	     :bind
+	     (("C-c o t" . org-roam-dailies-today)
+	      ("C-c o c" . org-roam-capture)
+	      :map org-mode-map
+	      ("C-c o r" . org-roam)
+	      ("C-c o f" . org-roam-find-file)
+	      ("c-c o y" . org-roam-dailies-yesterday)
+	      ("c-c o m" . org-roam-dailies-tomorrow)
+	      ("c-c o d" . org-roam-dailies-date)
+	      ("C-c o i" . org-roam-insert)))
+(use-package org-roam-server
+	     :bind
+	     (:map org-mode-map
+		   ;; TODO: update chart
+		   ("C-c o s" . org-roam-serever-mode)))
+
+(use-package paredit
+	     :init
+	     (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+	     (add-hook 'eval-expression-minibuffer-setup-hook 'enable-paredit-mode)
+	     (add-hook 'ielm-mode-hook 'enable-paredit-mode)
+	     (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+	     (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+	     (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+	     (add-hook 'javascript-mode-hook 'enable-paredit-mode)
+	     (add-hook 'clojure-mode-hook 'enable-paredit-mode))
+
+(use-package pbcopy)
+
+(use-package plantuml-mode
+	     :init
+	     (turn-on-pbcopy)) ;; more in el-get, but don't think i need it
+
+(use-package protobuf-mode)
+
+(use-package smart-mode-line
+	     :init
+	     (sml/setup))
+
+(use-package switch-window
+	     :bind
+	     ("C-x o" . switch-window))
+
+(use-package yaml-mode)
+
+(use-package yascroll
+	     :init
+	     (global-yascroll-barr-mode))
+
+(use-package yasnippet
+	     :init
+	     (yas-global-mode 1)
+	     :bind
+	     ("C-m y" . yas-expand))
+
+;; end - getting packages right
+
+;;; other package stuff
+
+;; emacs package manager
+(require 'package)
+
+;; (setq package-list '(emacsql-sqlite3))
+
+;; ;; fetch the list of packages available
+;; (unless package-archive-contents
+;;   (package-refresh-contents))
+
+;; ;; install the missing packages
+;; (dolist (package package-list)
+;;   (unless (package-installed-p package)
+;;     (package-install package)))
+
+;;; end - other package stuff
+
 ;; giving el-get a shot
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
@@ -51,10 +256,10 @@
       '(ace-jump-mode
         atom-dark-theme
         beacon
-        bufler
+	chrome.el
         company-mode
         company-lsp
-        ;; diff-hl
+	diff-hl
         dockerfile-mode
         emacs-powerline
         expand-region
@@ -86,8 +291,8 @@
         ;; multi-web-mode
         org-mode
         org-bullets
-        org-roam
-        org-roam-server
+	;; org-roam
+	;;corg-roam-server
         paredit
         pbcopy
         plantuml-mode
@@ -106,9 +311,6 @@
 
 (el-get 'sync my-packages)
 
-;; emacs package manager
-(require 'package)
-
 ;; add the user-contributed repository
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -116,19 +318,9 @@
              '("melpa" . "http://melpa.milkbox.net/packages/"))
 (package-initialize)
 
-;; exp
-;; (setq package-list '(smart-mode-line))
 
-                                        ; fetch the list of packages available
-;; (unless package-archive-contents
-;;   (package-refresh-contents))
 
-                                        ; install the missing packages
-;; (dolist (package package-list)
-;;   (unless (package-installed-p package)
-;;     (package-install package)))
 
-;;; end exp
 
 ;; fixes dired issue on startup
 (if (eq system-type 'darwin)
@@ -162,12 +354,11 @@
 (setq tramp-default-method "ssh")
 (customize-set-variable 'tramp-syntax 'simplified)
 
-;; (add-hook 'find-file-hook 'turn-on-visual-line-mode)
-;; (add-hook 'find-file-hook 'diff-hl-mode)
-
 (global-auto-revert-mode t)
 
 ;;; II.  Programming/Modes
+
+(setq ruby-insert-encoding-magic-comment nil)
 
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
@@ -183,7 +374,7 @@
   (interactive)
   (setq end (point-max))
   "does some cleaning up of files"
-;;   (untabify 0 end)
+  ;;   (untabify 0 end)
   (indent-region 0 end)
   (delete-trailing-whitespace 0 end))
 
@@ -225,7 +416,7 @@ With argument, do this that many times."
 
 ;; org-roam
 ;; from https://org-roam.github.io/org-roam/manual/Getting-Started.html#Getting-Started
-(add-hook 'after-init-hook 'org-roam-mode)
+;; (add-hook 'after-init-hook 'org-roam-mode)
 (setq org-agenda-files (list "~/notes"))
 
 ;; scala
@@ -289,7 +480,8 @@ With argument, do this that many times."
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-(beacon-mode 1)
+;; (require 'beacon)
+;; (beacon-mode 1)
 
 ;; theme
 
@@ -365,12 +557,13 @@ With argument, do this that many times."
   (define-key m (kbd "l") 'display-line-numbers-mode)
   (define-key m (kbd "e") 'electric-pair-mode)
   (define-key m (kbd "f") 'flymake-mode)
-  (define-key m (kbd "c") 'flycheck-mode)
+  ;; (define-key m (kbd "c") 'flycheck-mode)
   (define-key m (kbd "k") 'nav-text-minor-mode)
   (define-key m (kbd "p") 'paredit-mode)
   (define-key m (kbd "o") 'outline-minor-mode)
   ;; (define-key m (kbd "d") 'dim-others-mode)
-  ;; (define-key m (kbd "d") 'diff-hl-mode)
+  (define-key m (kbd "d") 'diff-hl-mode)
+  (define-key m (kbd "H") 'global-hl-line-mode)
   (define-key m (kbd "a") 'auto-complete-mode)
   (define-key m (kbd "v") 'visual-line-mode)
   (define-key m (kbd "t") 'toggle-truncate-lines))
@@ -442,9 +635,32 @@ With argument, do this that many times."
       (lambda () (interactive) (find-file "~/.emacs.d/el-get-user/init")))
     (define-key m (kbd "C-c . p")       ; open .profile
       (lambda () (interactive) (find-file "~/.profile")))
+
+    ;; experimenting
+
+    (define-key m (kbd "C-c . C")       ; open Joe zoom
+      (lambda () (interactive)
+        (save-window-excursion
+	  (async-shell-command "TODO"))))
+
+    (define-key m (kbd "C-c . c")       ; open Joe zoom
+      (lambda () (interactive)
+        (save-window-excursion
+	  (async-shell-command
+	   (concat
+	    "'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' "
+	    (read-string "url: "))))))
+
     (define-key m (kbd "C-c . j")       ; open Joe zoom
       (lambda () (interactive)
         (browse-url (getenv "JOE_ZOOM"))))
+
+
+
+    ;; work
+    (define-key m (kbd "C-c . n")       ; open github notifications
+      (lambda () (interactive)
+        (browse-url "https://github.com/notifications")))
 
     (define-key m (kbd "C-n") nav-map)         ; navigation prefix
     (define-key m (kbd "C-o") outline-map)     ; outline prefix
@@ -485,7 +701,6 @@ With argument, do this that many times."
     ("319bf1bab5d05e3a4c4a165efe69d27b3d975759034074f15fe61e92c7304884" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "e56f1b1c1daec5dbddc50abd00fcd00f6ce4079f4a7f66052cf16d96412a09a9" "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
  '(diff-hl-flydiff-delay 0.01)
  '(diff-hl-flydiff-mode t)
- '(diff-hl-margin-mode t)
  '(dired-use-ls-dired (quote unspecified))
  '(electric-pair-mode t)
  '(fill-column 80)
@@ -496,9 +711,9 @@ With argument, do this that many times."
  '(js2-basic-offset 2)
  '(js2-highlight-level 3)
  '(js2-strict-missing-semi-warning nil)
- '(package-selected-packages
-   (quote
-    (flycheck-protobuf protobuf-mode websocket web-beautify web w3 tt-mode stripe-buffer spotify smart-tabs-mode simple-httpd scss-mode request python-environment pylint projectile popup perl-completion packed oauth2 multi-term malabar-mode json-reformat javadoc-lookup ipython heroku haml-mode hackernews flymake-gjshint flymake-easy flymake-csslint flatland-theme epc emojify circe caml auto-dim-other-buffers anything alert airline-themes ace-jump-mode)))
+ ;; '(package-selected-packages
+ ;;   (quote
+ ;;    (emacsql-sqlite3 flycheck-protobuf protobuf-mode websocket web-beautify web w3 tt-mode stripe-buffer spotify smart-tabs-mode simple-httpd scss-mode request python-environment pylint projectile popup perl-completion packed oauth2 multi-term malabar-mode json-reformat javadoc-lookup ipython heroku haml-mode hackernews flymake-gjshint flymake-easy flymake-csslint flatland-theme epc emojify circe caml auto-dim-other-buffers anything alert airline-themes ace-jump-mode)))
  '(perl-tab-always-indent nil)
  '(recenter-positions (quote (top middle bottom)))
  '(safe-local-variable-values (quote ((require-final-newline . t))))

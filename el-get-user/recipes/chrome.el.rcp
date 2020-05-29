@@ -1,0 +1,4 @@
+(:name chrome.el
+       :description "chrome.el is a portable Emacs interface to Google Chrome."
+       :type github
+       :pkgname "anticomputer/chrome.el")

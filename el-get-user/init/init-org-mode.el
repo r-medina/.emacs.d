@@ -13,3 +13,5 @@
 
 (add-hook 'org-mode-hook 'flyspell-mode)
 (require 'org-tempo)
+
+(setq org-tag-alist '(("work" . ?w) ("health" . ?h) ("family" . ?f)))
