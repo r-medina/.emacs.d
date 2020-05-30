@@ -146,8 +146,7 @@ an attempt to get it documented and in one place.
       (use-package flycheck)
 
       (use-package flyspell
-	;; :hook (prog-mode . flyspell-prog-mode)
-	)
+      :hook (prog-mode . flyspell-prog-mode))
 
       (use-package forge)
 
@@ -398,65 +397,60 @@ an attempt to get it documented and in one place.
     (global-unset-key (kbd "M-m"))
     (global-set-key (kbd "M-m m") 'my-keys-mode)
 
+    (let ((m my-keys-mode-map))
+      (define-key m (kbd "C-t")   'comment-or-uncomment-region)
+      (define-key m (kbd "M-P")   'package-list-packages)
+      (define-key m (kbd "M-E")   'el-get-list-packages)
+      (define-key m (kbd "M-S")   'eshell)
+      (define-key m (kbd "C-c c") 'my-clean)
+      (define-key m (kbd "C-c b") 'beacon-blink)
+      (define-key m (kbd "C-c p") 'helm-projectile)
+      (define-key m (kbd "C-c t") 'heaven-and-hell-toggle-theme)
+      (define-key m (kbd "C-v")   'nav-text-minor-mode)
 
-    ;; defining a minor mode for all my keys!!
-    ;; stolen from: http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs
-    (defvar my-keys-mode-map
-      ;; try make-sparse-keymap instead
-      (let ((m (make-keymap)))
-	(define-key m (kbd "C-u")   'magit-status)                 ; magit!
-	(define-key m (kbd "C-t")   'comment-or-uncomment-region)  ; comment region
-	(define-key m (kbd "M-P")   'package-list-packages)        ; listing packages
-	(define-key m (kbd "M-E")   'el-get-list-packages)         ; listing packages
-	(define-key m (kbd "M-S")   'shell)                        ; open shell
-	(define-key m (kbd "C-c c") 'my-clean)                     ; cleaning function
-	(define-key m (kbd "C-c b") 'beacon-blink)
-	(define-key m (kbd "C-c p") 'helm-projectile)
-	(define-key m (kbd "C-c T") 'heaven-and-hell-toggle-theme) ; toggle theme
+      (define-key m (kbd "C-c . e")       ; open README.org
+	(lambda () (interactive) (find-file "~/.emacs.d/README.org")))
+      (define-key m (kbd "C-c . E")       ; open emacs config
+	(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+      (define-key m (kbd "C-c . z")       ; open .zshrc
+	(lambda () (interactive) (find-file "~/.zshrc")))
+      (define-key m (kbd "C-c . o")       ; open .zsh
+	(lambda () (interactive) (find-file "~/.oh-my-zsh")))
+      (define-key m (kbd "C-c . b")       ; open .bashrc
+	(lambda () (interactive) (find-file "~/.bashrc")))
+      (define-key m (kbd "C-c . i")       ; open init folder
+	(lambda () (interactive) (find-file "~/.emacs.d/el-get-user/init")))
 
-	(define-key m (kbd "C-c . e")       ; open .emacs
-	  ;; does this need interactive?
-	  (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
-	(define-key m (kbd "C-c . z")       ; open .zshrc
-	  (lambda () (interactive) (find-file "~/.zshrc")))
-	(define-key m (kbd "C-c . o")       ; open .zsh
-	  (lambda () (interactive) (find-file "~/.oh-my-zsh")))
-	(define-key m (kbd "C-c . b")       ; open .bashrc
-	  (lambda () (interactive) (find-file "~/.bashrc")))
-	(define-key m (kbd "C-c . i")       ; open init folder
-	  (lambda () (interactive) (find-file "~/.emacs.d/el-get-user/init")))
-	(define-key m (kbd "C-c . p")       ; open .profile
-	  (lambda () (interactive) (find-file "~/.profile")))
+      ;; experimenting
 
-	;; experimenting
+      ;; TODO
+      ;; for interacting with chrome from emacs
+      (define-key m (kbd "C-c . C")
+	(lambda () (interactive)
+	  (save-window-excursion
+	    (async-shell-command
+	     (concat
+	      "'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --remote-debugging-port=9222 "
+	      (read-string "url: "))))))
 
-	(define-key m (kbd "C-c . C")       ; open Joe zoom
-	  (lambda () (interactive)
-	    (save-window-excursion
-	      (async-shell-command "TODO"))))
+      ;; opens url
+      (define-key m (kbd "C-c . c")
+	(lambda () (interactive)
+	  (browse-url (read-string "url: "))))
 
-	(define-key m (kbd "C-c . c")       ; open Joe zoom
-	  (lambda () (interactive)
-	    (save-window-excursion
-	      (async-shell-command
-	       (concat
-		"'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' "
-		(read-string "url: "))))))
+      ;; opens Joe zoom + facebook page
+      (define-key m (kbd "C-c . j")
+	(lambda () (interactive)
+	  (browse-url (getenv "JOE_ZOOM"))
+	  (browse-url "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")))
 
-	(define-key m (kbd "C-c . j")       ; open Joe zoom
-	  (lambda () (interactive)
-	    (browse-url (getenv "JOE_ZOOM"))
-	    (browse-url "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")))
+      ;; work
 
-	;; work
-	(define-key m (kbd "C-c . n")       ; open github notifications
-	  (lambda () (interactive)
-	    (browse-url "https://github.com/notifications")))
-
-	(define-key m (kbd "C-n") nav-map)         ; navigation prefix
-	(define-key m (kbd "C-o") outline-map)     ; outline prefix
-	m)
-      "my-keys-mode keymap.")
+      ;; open github notifications
+      (define-key m (kbd "C-c . n")
+	(lambda () (interactive)
+	  (browse-url "https://github.com/notifications")))
+      m)
 
     ;; for directed buffer navigation
     (setq windmove-wrap-around t)
@@ -476,7 +470,6 @@ an attempt to get it documented and in one place.
       (define-key m (kbd "l") 'display-line-numbers-mode)
       (define-key m (kbd "e") 'electric-pair-mode)
       (define-key m (kbd "f") 'flymake-mode)
-      (define-key m (kbd "k") 'nav-text-minor-mode)
       (define-key m (kbd "p") 'paredit-mode)
       (define-key m (kbd "o") 'outline-minor-mode)
       (define-key m (kbd "d") 'diff-hl-mode)
@@ -491,12 +484,12 @@ an attempt to get it documented and in one place.
 	(suppress-keymap m t)
 	(define-key m (kbd "j") 'backward-char)
 	(define-key m (kbd "k") 'forward-char)
-	(define-key m (kbd "l") 'previous-line)
-	(define-key m (kbd ";") 'next-line)
+	(define-key m (kbd "o") 'previous-line)
+	(define-key m (kbd "l") 'next-line)
 	(define-key m (kbd "J") 'backward-word)
 	(define-key m (kbd "K") 'forward-word)
-	(define-key m (kbd "L") 'backward-paragraph)
-	(define-key m (kbd ":") 'forward-paragraph)
+	(define-key m (kbd "O") 'backward-paragraph)
+	(define-key m (kbd "L") 'forward-paragraph)
 
 	(define-key m (kbd "t") 'beginning-of-buffer)
 	(define-key m (kbd "y") 'end-of-buffer)
@@ -513,3 +506,5 @@ an attempt to get it documented and in one place.
       "A minor mode so that my hands hurt less."
       nil " nav-text" 'nav-text-minor-mode-map)
   #+end_src
+
+** DONE make nav-text better and faster to get to
