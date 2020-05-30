@@ -21,254 +21,495 @@ an attempt to get it documented and in one place.
    (add-to-list 'load-path "~/.emacs.d/usr")
    #+end_src
 
+** Miscellaneous
+
+   [[https://www.emacswiki.org/emacs/WinnerMode][=winner-mode=]] allows for window configuration undo and redo with
+   =C-c left= and =C-c right=
+   #+begin_src emacs-lisp
+   (setq winner-mode t)
+   #+end_src
+
+   Fixes =dired= issue on startup
+   #+begin_src emacs-lisp
+     (if (eq system-type 'darwin)
+	 (setq insert-directory-program "gls" dired-use-ls-dired t))
+   #+end_src
+
+   So coding system works consistently in terminal (I don't remember
+   why I initially needed this):
+   #+begin_src emacs-lisp
+     (set-terminal-coding-system 'utf-8)
+     (set-keyboard-coding-system 'utf-8)
+     (prefer-coding-system 'utf-8)
+   #+end_src
+
+   So selections get deleted if you type:
+   #+begin_src emacs-lisp
+     (delete-selection-mode 1)
+   #+end_src
+
+   Getting rid of annoying bell:
+   #+begin_src emacs-lisp
+   (setq ring-bell-function #'ignore)
+   #+end_src
+
+   Reloads a file if saved elsewhere ([[https://www.gnu.org/software/emacs/manual/html_node/emacs/Reverting.html][docs]]):
+   #+begin_src emacs-lisp
+     (global-auto-revert-mode t)
+   #+end_src
+
+   Function for basic cleaning of buffer:
+   #+begin_src emacs-lisp
+     (defun my-clean ()
+       (interactive)
+       (setq end (point-max))
+       "does some cleaning up of files"
+       (indent-region 0 end)
+       (delete-trailing-whitespace 0 end))
+   #+end_src
+
+   So deleting words backwards (=M-<Backspace>=) doesn't yank ([[https://www.emacswiki.org/emacs/BackwardDeleteWord][source]]):
+   #+begin_src emacs-lisp
+     (defun delete-word (arg)
+       "Delete characters forward until encountering the end of a
+     word. With argument, do this that many times."
+       (interactive "p")
+       (delete-region (point) (progn (forward-word arg) (point))))
+
+     (defun backward-delete-word (arg)
+       "Delete characters backward until encountering the end of a word.
+     With argument, do this that many times."
+       (interactive "p")
+       (delete-word (- arg)))
+   #+end_src
+
+** =my-keys-mode-map= setup
+
+   More on this later:
+   #+begin_src emacs-lisp
+     ;; TODO: add bindings in use-package statements to this instead
+     (defvar my-keys-mode-map (make-keymap) "key map containing all of my personal shortcuts")
+   #+end_src
+
 * Packages
 
   A lot of the following was taken from [[https://github.com/hrs/dotfiles/blob/master/emacs/dot-emacs.d/init.el][this config]].
-
-** Set package repositories
-   #+begin_src emacs-lisp
-   (require 'package)
-   (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
-   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-   (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-   (package-initialize)
-   #+end_src
 
 ** The almighty =use-package=:
 
    This installs it and updates package list just in case
 
-   #+begin_src emacs-lisp
-   (when (not (package-installed-p 'use-package))
-   (package-refresh-contents)
-   (package-install 'use-package))
-   #+end_src
-
-*** Configuration to make sure things load properly:
-
-    #+begin_src emacs-lisp
-    (require 'use-package-ensure)
-    (setq use-package-always-ensure t)
-
-    (use-package auto-compile
-    :config (auto-compile-on-load-mode))
-
-    (setq load-prefer-newer t)
-    #+end_src
-
 *** Package configurations
+
+    I may have to install =org-mode= on its own for the literate stuff to work.
 
     I'm going to keep these all in the same block rather than having a
     bunch of text explaining each one.
 
     #+begin_src emacs-lisp
-    (use-package ace-jump-mode
-      :bind
-      ("C-." . ace-jump-mode))
-    
-    ;; (use-package atom-dark-theme ; in el-get
-    ;;   :commands (atom-dark atom-dark-theme))
-    
-    (use-package beacon
-      :commands (beacon-mode beacon-blink)
-      :config
-      (beacon-mode 1)
-      :bind
-      ("C-c b" . beacon-blink))
-    
-    ;; (use-package chrome.el ; in el-get
-    ;;   :bind
-    ;;   (:map chrome-mode-map
-    ;; 	("M-r" . chrome-mark-tab)))
-    
-    (use-package company
-      :hook (after-init . global-company-mode)
-      :config
-      (setq company-idle-delay 1)
-      ;; starts completing after a single character instead of 3
-      (setq company-minimum-prefix-length 1)
-      ;; aligns fields in completions
-      (setq company-tooltip-align-annotations t)
-      (setq company-global-modes '(not markdown-mode)))
-    (use-package company-lsp)
-    
-    (use-package diff-hl
-      :commands diff-hl
-      :hook
-      (diff-hl-mode . diff-hl-margin-mode)
-      (diff-hl-mode . diff-hl-flydiff-mode)
-      (magit-pre-refresh . diff-hl-magit-pre-refresh)
-      (magit-post-refresh . diff-hl-magit-post-refresh)
-      :config
-      (global-diff-hl-mode))
-    
-    (use-package dockerfile-mode)
-    
-    ;; (use-package emacs-powerline) ;; TODO: am i using this? ;; in el-get
-    
-    (use-package expand-region) ;; TODO: am i using this?
-    
-    (use-package flycheck)
-    
-    (use-package flyspell
-      ;; :hook (prog-mode . flyspell-prog-mode)
-      )
-    
-    (use-package forge)
-    
-    (use-package git-link
-      :bind
-      ("C-c l" . git-link))
-    
-    (use-package go-mode
-      :init
-      (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
-      :hook
-      (go-mode . 'flycheck-mode)
-      (go-mode . 'lsp-deferred))
-    ;; (use-package go-mod) ;; el-get
-    ;; (use-package go-imports) ;; el-get
-    
-    (use-package golden-ratio
-      :config
-      (golden-ratio-mode 1))
-    
-    (use-package hcl-mode
-      :init
-      (add-to-list 'auto-mode-alist '("\\.hcl.ctmpl\\'" . hcl-mode)))
-    
-    (use-package heaven-and-hell
-      :hook
-      (after-init . heaven-and-hell-init-hook)
-      :config
-      (setq heaven-and-hell-themes
-    	'((light . tango)
-    	  (dark . atom-dark)))
-      (setq heaven-and-hell-load-theme-no-confirm t))
-    
-    (use-package helm
-      :config
-      (helm-mode 1)
-      :bind
-      (("M-x" . helm-M-x)
-       ("C-x C-b" . helm-multi-files)
-       ("C-x C-f" . helm-find-files)
-       :map helm-find-files-map
-       ;; TODO: look into \t vs <tab> vs TAB
-       ("<tab>" . 'helm-execute-persistent-action)))
-    
-    (use-package helm-projectile)
-    
-    (use-package json-mode) ;; init in el-get
-    
-    (use-package lsp-mode)
-    (use-package lsp-ui)
-    
-    (use-package magit)
-    
-    (use-package markdown-mode
-      :mode ("\\.md\\'" . markdown-mode))
-    
-    (use-package org
-      :ensure org-plus-contrib
-      ;; :commands (org
-      ;;            org-capture
-      ;;            org-mode
-      ;;            org-store-link
-      ;;            update-org-hours
-      ;;            my-term-agenda
-      ;;            dired-notes
-      ;;            jump-to-org-agenda)
-      :mode ("\\.org\\'" . org-mode)
-    
-      :config
-    
-      (setq org-ellipsis "↩")
-      (setq org-todo-keywords
-      	'((sequence "TODO" "IN PROGRESS" "WAITING" "|" "DONE")
-      	  (sequence "MAYBE")))
-      (setq org-directory "~/notes")
-      (setq org-agenda-files (list "~/notes"))
-      (setq org-tag-alist '(("work" . ?w)
-      			("health" . ?h)
-      			("family" . ?f)
-      			("personal" . ?p)
-      			("engineering-success" . ?e)))
-      (require 'org-tempo)
-    
-      (use-package org-bullets
-        :hook (org-mode . (lambda () (org-bullets-mode 1))))
-      
-      :hook
-      (org-mode . flyspell-mode))
-    
-    ;; (use-package org-roam
-    ;;   :requires org
-    ;;   :pin manual
-    ;;   :hook
-    ;;   (emacs-startup-hook . org-roam-mode)
-    ;;   :bind
-    ;;   (("C-c o t" . org-roam-dailies-today)
-    ;;    ("C-c o c" . org-roam-capture)
-    ;;    ("C-c o f" . org-roam-find-file)
-    ;;    :map org-mode-map
-    ;;    ("C-c o r" . org-roam)
-    ;;    ("C-c o y" . org-roam-dailies-yesterday)
-    ;;    ("C-c o m" . org-roam-dailies-tomorrow)
-    ;;    ("C-c o d" . org-roam-dailies-date)
-    ;;    ("C-c o i" . org-roam-insert))
-    ;;   :config
-    ;;   (setq org-roam-directory "~/notes")
-    ;;   (use-package org-roam-server  
-    ;;     :bind
-    ;;     (:map org-mode-map
-    ;; 	  ;; TODO: update chart
-    ;; 	  ("C-c o s" . org-roam-serever-mode))))
-    
-    (use-package paredit
-      :config
-      (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
-      (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-      (add-hook 'ielm-mode-hook #'enable-paredit-mode)
-      (add-hook 'lisp-mode-hook #'enable-paredit-mode)
-      (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-      (add-hook 'scheme-mode-hook #'enable-paredit-mode)
-      (add-hook 'javascript-mode-hook #'enable-paredit-mode)
-      (add-hook 'clojure-mode-hook #'enable-paredit-mode))
-    
-    (use-package pbcopy
-      :config
-      (turn-on-pbcopy)) ;; more in el-get, but don't think i need it
-    
-    (use-package plantuml-mode)
-    
-    (use-package protobuf-mode)
-    
-    (use-package smart-mode-line
-      :commands sml/setup
-      :init
-      (add-hook 'after-init-hook #'sml/setup))
-    
-    (use-package switch-window
-      :bind ("C-x o" . switch-window))
-    
-    (use-package tramp
-      :config
-      (setq tramp-default-method "ssh")
-      (customize-set-variable 'tramp-syntax 'simplified))
-    
-    (use-package yaml-mode
-      :commands yaml-mode)
-    
-    (use-package yascroll
-      :config
-      (global-yascroll-bar-mode))
-    
-    (use-package yasnippet
-      :config
-      (yas-global-mode 1)
-      :bind
-      ("C-c y" . yas-expand))
+      (use-package ace-jump-mode
+	:bind (:map my-keys-mode-map
+		    ("C-." . ace-jump-mode)))
+
+      (use-package beacon
+	:commands (beacon-mode beacon-blink)
+	:config
+	(beacon-mode 1)
+	:bind (:map my-keys-mode-map
+		    ("C-c b" . beacon-blink)))
+
+      (use-package company
+	:hook (after-init . global-company-mode)
+	:config
+	(setq company-idle-delay 1)
+	;; starts completing after a single character instead of 3
+	(setq company-minimum-prefix-length 1)
+	;; aligns fields in completions
+	(setq company-tooltip-align-annotations t)
+	(setq company-global-modes '(not markdown-mode)))
+      (use-package company-lsp)
+
+      (use-package diff-hl
+	:commands diff-hl
+	:hook
+	(diff-hl-mode . diff-hl-margin-mode)
+	(diff-hl-mode . diff-hl-flydiff-mode)
+	(magit-pre-refresh . diff-hl-magit-pre-refresh)
+	(magit-post-refresh . diff-hl-magit-post-refresh)
+	:config
+	(global-diff-hl-mode))
+
+      (use-package dockerfile-mode)
+
+      (use-package expand-region) ;; TODO: am i using this?
+
+      (use-package flycheck)
+
+      (use-package flyspell
+	;; :hook (prog-mode . flyspell-prog-mode)
+	)
+
+      (use-package forge)
+
+      (use-package git-link
+	:bind
+	("C-c l" . git-link))
+
+      (use-package go-mode
+	:mode "\\.go\\'"
+	:hook
+	(go-mode . flycheck-mode)
+	(go-mode . lsp-deferred))
+      ;; additional go packages are in el-get
+
+      (use-package golden-ratio
+	:config
+	(golden-ratio-mode 1))
+
+      (use-package hcl-mode
+	:mode "\\.hcl.ctmpl\\'")
+
+      (use-package heaven-and-hell
+	:hook
+	(after-init . heaven-and-hell-init-hook)
+	:config
+	(setq heaven-and-hell-themes
+	      '((light . tango)
+		(dark . atom-dark)))
+	(setq heaven-and-hell-load-theme-no-confirm t))
+
+      (use-package helm
+	:config
+	(helm-mode 1)
+	:bind  (:map helm-find-files-map
+		     ("<tab>" . 'helm-execute-persistent-action)
+		     :map my-keys-mode-map
+		     ("M-x" . helm-M-x)
+		     ("C-x C-b" . helm-multi-files)
+		     ("C-x C-f" . helm-find-files)))
+
+      (use-package helm-projectile)
+
+      (use-package json-mode) ;; init in el-get
+
+      (use-package lsp-mode)
+      (use-package lsp-ui)
+
+      (use-package magit
+	:bind (:map my-keys-mode-map
+		    ("C-u" . magit-status)))
+
+      (use-package markdown-mode
+	:mode "\\.md\\'")
+
+      (use-package org
+	:ensure org-plus-contrib
+	;; :commands (org
+	;;            org-capture
+	;;            org-mode
+	;;            org-store-link
+	;;            update-org-hours
+	;;            my-term-agenda
+	;;            dired-notes
+	;;            jump-to-org-agenda)
+	:mode ("\\.org\\'" . org-mode)
+
+	:config
+
+	(setq org-ellipsis "↩")
+	(setq org-todo-keywords
+	      '((sequence "TODO" "IN PROGRESS" "WAITING" "|" "DONE")
+		(sequence "MAYBE")))
+	(setq org-directory "~/notes")
+	(setq org-agenda-files (list "~/notes"))
+	(setq org-tag-alist '(("work" . ?w)
+			      ("health" . ?h)
+			      ("family" . ?f)
+			      ("personal" . ?p)
+			      ("engineering-success" . ?e)))
+	(require 'org-tempo)
+
+	(use-package org-bullets
+	  :hook (org-mode . (lambda () (org-bullets-mode 1))))
+
+	:hook
+	(org-mode . flyspell-mode))
+
+
+      ;; ;; commented because it's not in the package registries right now :(
+      ;; (use-package org-roam
+      ;;   :requires org
+      ;;   :pin manual
+      ;;   :hook
+      ;;   (emacs-startup-hook . org-roam-mode)
+      ;;   :bind
+      ;;   (("C-c o t" . org-roam-dailies-today)
+      ;;    ("C-c o c" . org-roam-capture)
+      ;;    ("C-c o f" . org-roam-find-file)
+      ;;    :map org-mode-map
+      ;;    ("C-c o r" . org-roam)
+      ;;    ("C-c o y" . org-roam-dailies-yesterday)
+      ;;    ("C-c o m" . org-roam-dailies-tomorrow)
+      ;;    ("C-c o d" . org-roam-dailies-date)
+      ;;    ("C-c o i" . org-roam-insert))
+      ;;   :config
+      ;;   (setq org-roam-directory "~/notes")
+      ;;   (use-package org-roam-server
+      ;;     :bind
+      ;;     (:map org-mode-map
+      ;; 	  ;; TODO: update chart
+      ;; 	  ("C-c o s" . org-roam-serever-mode))))
+
+      (use-package paredit
+	:hook
+	(emacs-lisp-mode . enable-paredit-mode)
+	(eval-expression-minibuffer-setup-hook . enable-paredit-mode)
+	(ielm-mode-hook . enable-paredit-mode)
+	(lisp-mode-hook . enable-paredit-mode)
+	(lisp-interaction-mode-hook . enable-paredit-mode)
+	(scheme-mode-hook . enable-paredit-mode)
+	(javascript-mode-hook . enable-paredit-mode)
+	(clojure-mode-hook . enable-paredit-mode))
+
+      (use-package pbcopy
+	:config
+	(turn-on-pbcopy))
+
+      (use-package plantuml-mode)
+
+      (use-package protobuf-mode)
+
+      (use-package smart-mode-line
+	:commands sml/setup
+	:hook
+	(after-init . sml/setup))
+
+      (use-package switch-window
+	:bind (:map my-keys-mode
+		    ("C-x o" . switch-window)))
+
+      (use-package tramp
+	:config
+	(setq tramp-default-method "ssh")
+	(customize-set-variable 'tramp-syntax 'simplified))
+
+      (use-package yaml-mode
+	:mode ("\\.yaml\\'" "\\.yml\\'"))
+
+      (use-package yascroll
+	:config
+	(global-yascroll-bar-mode))
+
+      (use-package yasnippet
+	:config
+	(yas-global-mode 1)
+	:bind (:map my-keys-mode-map
+	       ("C-c y" . yas-expand)))
     #+end_src
 
+**** TODO make a macro to encapsulate =:bind (:map my-key-mode-map)=
+
+** [[https://github.com/dimitri/el-get][=el-get=]]
+
+*** Installation
+    #+begin_src emacs-lisp
+      (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+      (unless (require 'el-get nil 'noerror)
+	(with-current-buffer
+	    (url-retrieve-synchronously
+	     "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+	  (goto-char (point-max))
+	  (eval-print-last-sexp)))
+    #+end_src
+
+*** Configure my custom recipes and configurations
+    #+begin_src emacs-lisp
+      (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes/")
+      (setq el-get-user-package-directory "~/.emacs.d/el-get-user/init/")
+    #+end_src
+
+*** My packages
+    #+begin_src emacs-lisp
+      (setq my-packages
+	    '(atom-dark-theme
+	      chrome.el
+	      emacs-powerline
+	      go-mod
+	      go-imports))
+    #+end_src
+
+*** Run it
+    #+begin_src emacs-lisp
+      (ignore-errors (el-get-self-update)) ;; maybe bring this back?
+      ;; (el-get-update-all)
+      (el-get-cleanup my-packages) ;; deletes no-longer-listed packages
+
+      (el-get 'sync my-packages)
+    #+end_src
+
+* Look/Feel
+
+  #+begin_src emacs-lisp
+    ;; get rid of menus and bars
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+
+    ;; get rid of startup screens
+    (setq inhibit-splash-screen t)
+    (setq inhibit-startup-message t)
+
+    (column-number-mode t)
+    ;; so lines don't get broken onto next line if longer than buffer
+    (set-default 'truncate-lines t)
+
+    ;; show matching parenthesis
+    (show-paren-mode t)
+
+    ;; fixing scrolling behavior to be less jumpy
+    (setq scroll-step 1)
+    (setq scroll-conservatively 10000)
+    (setq auto-window-vscroll nil)
+  #+end_src
+
+* Programming
+
+  Fixes annoying comment that =ruby-mode= puts in:
+  #+begin_src emacs-lisp
+    (setq ruby-insert-encoding-magic-comment nil)
+  #+end_src
+* Key Bindings
+
+  Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this stackoverflow]]. The idea is you make all your
+  personal key bindings in their own map that you can disable and get
+  to everything underneath.
+
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "<M-DEL>") 'backward-delete-word)
+
+    ;; personal minor mode for key map. GREAT hack
+    (define-minor-mode my-keys-mode
+      "A minor mode so that my key settings override annoying major modes."
+      t " my-keys" 'my-keys-mode-map)
+    (my-keys-mode 1)
+
+    ;; toggle my minor mode
+    (global-unset-key (kbd "M-m"))
+    (global-set-key (kbd "M-m m") 'my-keys-mode)
+
+
+    ;; defining a minor mode for all my keys!!
+    ;; stolen from: http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs
+    (defvar my-keys-mode-map
+      ;; try make-sparse-keymap instead
+      (let ((m (make-keymap)))
+	(define-key m (kbd "C-u")   'magit-status)                 ; magit!
+	(define-key m (kbd "C-t")   'comment-or-uncomment-region)  ; comment region
+	(define-key m (kbd "M-P")   'package-list-packages)        ; listing packages
+	(define-key m (kbd "M-E")   'el-get-list-packages)         ; listing packages
+	(define-key m (kbd "M-S")   'shell)                        ; open shell
+	(define-key m (kbd "C-c c") 'my-clean)                     ; cleaning function
+	(define-key m (kbd "C-c b") 'beacon-blink)
+	(define-key m (kbd "C-c p") 'helm-projectile)
+	(define-key m (kbd "C-c T") 'heaven-and-hell-toggle-theme) ; toggle theme
+
+	(define-key m (kbd "C-c . e")       ; open .emacs
+	  ;; does this need interactive?
+	  (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+	(define-key m (kbd "C-c . z")       ; open .zshrc
+	  (lambda () (interactive) (find-file "~/.zshrc")))
+	(define-key m (kbd "C-c . o")       ; open .zsh
+	  (lambda () (interactive) (find-file "~/.oh-my-zsh")))
+	(define-key m (kbd "C-c . b")       ; open .bashrc
+	  (lambda () (interactive) (find-file "~/.bashrc")))
+	(define-key m (kbd "C-c . i")       ; open init folder
+	  (lambda () (interactive) (find-file "~/.emacs.d/el-get-user/init")))
+	(define-key m (kbd "C-c . p")       ; open .profile
+	  (lambda () (interactive) (find-file "~/.profile")))
+
+	;; experimenting
+
+	(define-key m (kbd "C-c . C")       ; open Joe zoom
+	  (lambda () (interactive)
+	    (save-window-excursion
+	      (async-shell-command "TODO"))))
+
+	(define-key m (kbd "C-c . c")       ; open Joe zoom
+	  (lambda () (interactive)
+	    (save-window-excursion
+	      (async-shell-command
+	       (concat
+		"'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' "
+		(read-string "url: "))))))
+
+	(define-key m (kbd "C-c . j")       ; open Joe zoom
+	  (lambda () (interactive)
+	    (browse-url (getenv "JOE_ZOOM"))
+	    (browse-url "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")))
+
+	;; work
+	(define-key m (kbd "C-c . n")       ; open github notifications
+	  (lambda () (interactive)
+	    (browse-url "https://github.com/notifications")))
+
+	(define-key m (kbd "C-n") nav-map)         ; navigation prefix
+	(define-key m (kbd "C-o") outline-map)     ; outline prefix
+	m)
+      "my-keys-mode keymap.")
+
+    ;; for directed buffer navigation
+    (setq windmove-wrap-around t)
+    (define-prefix-command 'nav-map)
+    (define-key my-keys-mode-map (kbd "C-n") nav-map)
+    (let ((m nav-map))
+      (define-key m (kbd "o") 'windmove-up)
+      (define-key m (kbd "l") 'windmove-down)
+      (define-key m (kbd "j") 'windmove-left)
+      (define-key m (kbd "k") 'windmove-right))
+
+    ;; for quickly changing minor modes
+    (define-prefix-command 'quick-modes-map)
+    (define-key my-keys-mode-map (kbd "M-m") quick-modes-map)
+    (let ((m quick-modes-map))
+      (define-key m (kbd "w") 'whitespace-mode)
+      (define-key m (kbd "l") 'display-line-numbers-mode)
+      (define-key m (kbd "e") 'electric-pair-mode)
+      (define-key m (kbd "f") 'flymake-mode)
+      (define-key m (kbd "k") 'nav-text-minor-mode)
+      (define-key m (kbd "p") 'paredit-mode)
+      (define-key m (kbd "o") 'outline-minor-mode)
+      (define-key m (kbd "d") 'diff-hl-mode)
+      (define-key m (kbd "h") 'global-hl-line-mode)
+      (define-key m (kbd "a") 'auto-complete-mode)
+      (define-key m (kbd "t") 'toggle-truncate-lines))
+
+    ;; minor mode for navigating text easily
+    ;; enter into it with M-m k
+    (defvar nav-text-minor-mode-map
+      (let ((m (make-sparse-keymap)))
+	(suppress-keymap m t)
+	(define-key m (kbd "j") 'backward-char)
+	(define-key m (kbd "k") 'forward-char)
+	(define-key m (kbd "l") 'previous-line)
+	(define-key m (kbd ";") 'next-line)
+	(define-key m (kbd "J") 'backward-word)
+	(define-key m (kbd "K") 'forward-word)
+	(define-key m (kbd "L") 'backward-paragraph)
+	(define-key m (kbd ":") 'forward-paragraph)
+
+	(define-key m (kbd "t") 'beginning-of-buffer)
+	(define-key m (kbd "y") 'end-of-buffer)
+	(define-key m (kbd "a") 'beginning-of-line)
+	(define-key m (kbd "e") 'end-of-line)
+	(define-key m (kbd "g") 'goto-line)
+	(define-key m (kbd "G") 'ace-jump-mode)
+	(define-key m (kbd "S") 'isearch-backward)
+	(define-key m (kbd "s") 'isearch-forward)
+	m)
+      "nav-text-minor-mode keymap.")
+
+    (define-minor-mode nav-text-minor-mode
+      "A minor mode so that my hands hurt less."
+      nil " nav-text" 'nav-text-minor-mode-map)
+  #+end_src
