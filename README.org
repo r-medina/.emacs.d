@@ -146,7 +146,7 @@ an attempt to get it documented and in one place.
       (use-package flycheck)
 
       (use-package flyspell
-      :hook (prog-mode . flyspell-prog-mode))
+	:hook (prog-mode . flyspell-prog-mode))
 
       (use-package forge)
 
@@ -236,28 +236,25 @@ an attempt to get it documented and in one place.
 
 
       ;; ;; commented because it's not in the package registries right now :(
-      ;; (use-package org-roam
-      ;;   :requires org
-      ;;   :pin manual
-      ;;   :hook
-      ;;   (emacs-startup-hook . org-roam-mode)
-      ;;   :bind
-      ;;   (("C-c o t" . org-roam-dailies-today)
-      ;;    ("C-c o c" . org-roam-capture)
-      ;;    ("C-c o f" . org-roam-find-file)
-      ;;    :map org-mode-map
-      ;;    ("C-c o r" . org-roam)
-      ;;    ("C-c o y" . org-roam-dailies-yesterday)
-      ;;    ("C-c o m" . org-roam-dailies-tomorrow)
-      ;;    ("C-c o d" . org-roam-dailies-date)
-      ;;    ("C-c o i" . org-roam-insert))
-      ;;   :config
-      ;;   (setq org-roam-directory "~/notes")
-      ;;   (use-package org-roam-server
-      ;;     :bind
-      ;;     (:map org-mode-map
-      ;; 	  ;; TODO: update chart
-      ;; 	  ("C-c o s" . org-roam-serever-mode))))
+      (use-package org-roam
+	:requires org
+	:hook
+	(emacs-startup-hook . org-roam-mode)
+	:bind (:map my-keys-mode-map
+		    ("C-c o t" . org-roam-dailies-today)
+		    ("C-c o c" . org-roam-capture)
+		    ("C-c o f" . org-roam-find-file)
+		    :map org-mode-map
+		    ("C-c o r" . org-roam)
+		    ("C-c o y" . org-roam-dailies-yesterday)
+		    ("C-c o m" . org-roam-dailies-tomorrow)
+		    ("C-c o d" . org-roam-dailies-date)
+		    ("C-c o i" . org-roam-insert)
+		    ("C-c o s" . org-roam-server-mode)
+		    ("C-c o S" . (lambda () (interactive) (browse-url "http://localhost:8080/"))))
+
+	:config
+	(setq org-roam-directory "~/notes"))
 
       (use-package paredit
 	:hook
@@ -303,7 +300,7 @@ an attempt to get it documented and in one place.
 	:config
 	(yas-global-mode 1)
 	:bind (:map my-keys-mode-map
-	       ("C-c y" . yas-expand)))
+		    ("C-c y" . yas-expand)))
     #+end_src
 
 **** TODO make a macro to encapsulate =:bind (:map my-key-mode-map)=
