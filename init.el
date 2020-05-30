@@ -158,59 +158,65 @@
 (use-package magit)
 
 (use-package markdown-mode
-  :init
   :mode ("\\.md\\'" . markdown-mode))
 
 (use-package org
   :no-require t
-  ;; :demand t ;; TODO
   :ensure org-plus-contrib
-  ;; :commands org-tempo
-  :commands (org org-mode org-capture org-agenda)
+  ;; :commands (org
+  ;;            org-capture
+  ;;            org-mode
+  ;;            org-store-link
+  ;;            update-org-hours
+  ;;            my-term-agenda
+  ;;            dired-notes
+  ;;            jump-to-org-agenda)
   :mode ("\\.org\\'" . org-mode)
-  :config
-  (setq org-ellipsis "↩")
-  (setq org-todo-keywords
-	'((sequence "TODO" "IN PROGRESS" "WAITING" "|" "DONE")
-	  (sequence "MAYBE")))
-  (setq org-directory "~/notes")
-  (setq org-agenda-files (list "~/notes"))
-  (require 'org-tempo) ;; TODO
-  (setq org-tag-alist '(("work" . ?w)
-			("health" . ?h)
-			("family" . ?f)
-			("personal" . ?p)
-			("engineering-success" . ?e)))
 
-  :hook
-  (org-mode . 'flyspell-mode))
-(use-package org-bullets
-  :hook
-  (org-mode . (lambda () (org-bullets-mode 1))))
-
-(use-package org-roam
-  :no-require t
-  :requires org-plus-contrib
-  :hook
-  (emacs-startup-hook . org-roam-mode)
   :config
-  (setq org-roam-directory "~/notes")
-  ;; :bind
-  ;; (("C-c o t" . org-roam-dailies-today)
-  ;;  ("C-c o c" . org-roam-capture)
-  ;;  ("C-c o f" . org-roam-find-file)
-  ;;  :map org-mode-map
-  ;;  ("C-c o r" . org-roam)
-  ;;  ("c-c o y" . org-roam-dailies-yesterday)
-  ;;  ("c-c o m" . org-roam-dailies-tomorrow)
-  ;;  ("c-c o d" . org-roam-dailies-date)
-  ;;  ("C-c o i" . org-roam-insert))
-  )
-(use-package org-roam-server  
-  :bind
-  (:map org-mode-map
-	;; TODO: update chart
-	("C-c o s" . org-roam-serever-mode)))
+
+  ;; (setq org-ellipsis "↩")
+  ;; (setq org-todo-keywords
+  ;; 	'((sequence "TODO" "IN PROGRESS" "WAITING" "|" "DONE")
+  ;; 	  (sequence "MAYBE")))
+  ;; (setq org-directory "~/notes")
+  ;; (setq org-agenda-files (list "~/notes"))
+  ;; (setq org-tag-alist '(("work" . ?w)
+  ;; 			("health" . ?h)
+  ;; 			("family" . ?f)
+  ;; 			("personal" . ?p)
+  ;; 			("engineering-success" . ?e)))
+  ;; (require 'org-tempo)
+
+  ;; (use-package org-bullets
+  ;;   :hook (org-mode . (lambda () (org-bullets-mode 1))))
+
+  ;; (use-package org-roam
+  ;;   :no-require t
+  ;;   :hook
+  ;;   (emacs-startup-hook . org-roam-mode)
+  ;;   :config
+  ;;   (setq org-roam-directory "~/notes")
+  ;;   (use-package org-roam-server  
+  ;;     :bind
+  ;;     ;; (:map org-mode-map
+  ;;     ;; 	;; TODO: update chart
+  ;;     ;; 	("C-c o s" . org-roam-serever-mode)) 
+  ;;     )
+
+  ;;   :bind
+  ;;   (("C-c o t" . org-roam-dailies-today)
+  ;;    ("C-c o c" . org-roam-capture)
+  ;;    ("C-c o f" . org-roam-find-file)
+  ;;    :map org-mode-map
+  ;;    ("C-c o r" . org-roam)
+  ;;    ("C-c o y" . org-roam-dailies-yesterday)
+  ;;    ("C-c o m" . org-roam-dailies-tomorrow)
+  ;;    ("C-c o d" . org-roam-dailies-date)
+  ;;    ("C-c o i" . org-roam-insert)))
+  
+  :hook
+  (org-mode . flyspell-mode))
 
 (use-package paredit
   :config
