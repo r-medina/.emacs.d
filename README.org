@@ -109,7 +109,7 @@ an attempt to get it documented and in one place.
     #+begin_src emacs-lisp
       (use-package ace-jump-mode
 	:bind (:map my-keys-mode-map
-		    ("C-." . ace-jump-mode)))
+		    ("C-j" . ace-jump-mode)))
 
       (use-package beacon
 	:commands (beacon-mode beacon-blink)
@@ -173,7 +173,7 @@ an attempt to get it documented and in one place.
 	(after-init . heaven-and-hell-init-hook)
 	:config
 	(setq heaven-and-hell-themes
-	      '((light . tango)
+	      '((light . bergen)
 		(dark . atom-dark)))
 	(setq heaven-and-hell-load-theme-no-confirm t))
 
@@ -232,8 +232,16 @@ an attempt to get it documented and in one place.
 	  :hook (org-mode . (lambda () (org-bullets-mode 1))))
 
 	:hook
-	(org-mode . flyspell-mode))
-
+	(org-mode . flyspell-mode)
+	:bind (("C-j" . nil)
+	       :map org-mode-map
+		    ("M-<left>" . nil)
+		    ("M-S-<left>" . org-metaleft)
+		    ("M-C-S-<left>" . org-shiftmetaleft)
+		    ("M-<right>" . nil)
+		    ("M-S-<right>" . org-metaright)
+		    ("M-C-S-<right>" . org-shiftmetaright)
+		    ("C-j" . nil)))
 
       ;; ;; commented because it's not in the package registries right now :(
       (use-package org-roam
@@ -265,7 +273,8 @@ an attempt to get it documented and in one place.
 	(lisp-interaction-mode-hook . enable-paredit-mode)
 	(scheme-mode-hook . enable-paredit-mode)
 	(javascript-mode-hook . enable-paredit-mode)
-	(clojure-mode-hook . enable-paredit-mode))
+	(clojure-mode-hook . enable-paredit-mode)
+	(org-mode-hook . enable-paredit-mode))
 
       (use-package pbcopy
 	:config
@@ -281,7 +290,7 @@ an attempt to get it documented and in one place.
 	(after-init . sml/setup))
 
       (use-package switch-window
-	:bind (:map my-keys-mode
+	:bind (:map my-keys-mode-map
 		    ("C-x o" . switch-window)))
 
       (use-package tramp
@@ -438,15 +447,20 @@ an attempt to get it documented and in one place.
       ;; opens Joe zoom + facebook page
       (define-key m (kbd "C-c . j")
 	(lambda () (interactive)
-	  (browse-url (getenv "JOE_ZOOM"))
-	  (browse-url "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")))
+	  ;; TODO: use chrome with profiles explicitly
+	  (browse-url "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")
+	  (browse-url (getenv "JOE_ZOOM"))))
 
       ;; work
 
       ;; open github notifications
       (define-key m (kbd "C-c . n")
 	(lambda () (interactive)
-	  (browse-url "https://github.com/notifications")))
+	  (async-shell-command
+	   (concat
+	    "'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' "
+	    "--profile-directory='Profile 3' "
+	    "https://github.com/notifications"))))
       m)
 
     ;; for directed buffer navigation
@@ -504,4 +518,9 @@ an attempt to get it documented and in one place.
       nil " nav-text" 'nav-text-minor-mode-map)
   #+end_src
 
+  #+RESULTS:
+  : (keymap (115 . isearch-forward) (83 . isearch-backward) (71 . ace-jump-mode) (103 . goto-line) (101 . end-of-line) (97 . beginning-of-line) (121 . end-of-buffer) (116 . beginning-of-buffer) (76 . forward-paragraph) (79 . backward-paragraph) (75 . forward-word) (74 . backward-word) (108 . next-line) (111 . previous-line) (107 . forward-char) (106 . backward-char) (remap keymap (self-insert-command . undefined)))
+
+* TODOs
+** TODO google search from keyboard shortcut
 ** DONE make nav-text better and faster to get to
