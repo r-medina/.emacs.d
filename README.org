@@ -2,6 +2,8 @@
 #+AUTHOR: Ricky Medina
 #+DATE: 2020-05-27
 
+* this is no longer my emacs config please see [[https://github.com/r-medina/dotfiles/tree/master/dotfiles/emacs.d][r-medina/dotfiles]]
+
 After getting to know org-mode, I am starting the process of moving more and
 more of my life onto it.
 
