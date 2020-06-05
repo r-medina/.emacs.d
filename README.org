@@ -180,12 +180,17 @@ an attempt to get it documented and in one place.
       (use-package helm
 	:config
 	(helm-mode 1)
-	:bind  (:map helm-find-files-map
+	:bind  (:map helm-map
 		     ("<tab>" . 'helm-execute-persistent-action)
 		     :map my-keys-mode-map
 		     ("M-x" . helm-M-x)
 		     ("C-x C-b" . helm-multi-files)
 		     ("C-x C-f" . helm-find-files)))
+
+      (use-package helm-flyspell
+	:bind (:map my-keys-mode-map
+		    ;; TODO: consider putting this in my-keys-mode-map
+		    ("C-;" . helm-flyspell-correct)))
 
       (use-package helm-projectile)
 
@@ -447,9 +452,13 @@ an attempt to get it documented and in one place.
       ;; opens Joe zoom + facebook page
       (define-key m (kbd "C-c . j")
 	(lambda () (interactive)
-	  ;; TODO: use chrome with profiles explicitly
-	  (browse-url "https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685")
-	  (browse-url (getenv "JOE_ZOOM"))))
+	  (async-shell-command
+	   (concat
+	    ;; FIXME
+	    "'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' "
+	    "--profile-directory='Profile 2' "
+	    "'https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685' "
+	    "'" (getenv "JOE_ZOOM") "'"))))
 
       ;; work
 

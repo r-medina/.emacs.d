@@ -48,7 +48,7 @@
  '(hscroll-margin 8)
  '(hscroll-step 1)
  '(org-roam-server-mode t)
- '(package-selected-packages (quote (use-package)))
+ '(package-selected-packages (quote (treemacs neotree use-package)))
  '(tramp-syntax (quote simplified) nil (tramp)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
