@@ -201,7 +201,7 @@ an attempt to get it documented and in one place.
 
       (use-package magit
 	:bind (:map my-keys-mode-map
-		    ("C-u" . magit-status)))
+		    ("C-S-U" . magit-status)))
 
       (use-package markdown-mode
 	:mode "\\.md\\'")
