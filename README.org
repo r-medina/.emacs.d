@@ -240,19 +240,31 @@ an attempt to get it documented and in one place.
 	(org-mode . flyspell-mode)
 	:bind (("C-j" . nil)
 	       :map org-mode-map
-		    ("M-<left>" . nil)
-		    ("M-S-<left>" . org-metaleft)
-		    ("M-C-S-<left>" . org-shiftmetaleft)
-		    ("M-<right>" . nil)
-		    ("M-S-<right>" . org-metaright)
-		    ("M-C-S-<right>" . org-shiftmetaright)
-		    ("C-j" . nil)))
+	       ("M-<left>" . nil)
+	       ("M-S-<left>" . org-metaleft)
+	       ("M-C-S-<left>" . org-shiftmetaleft)
+	       ("M-<right>" . nil)
+	       ("M-S-<right>" . org-metaright)
+	       ("M-C-S-<right>" . org-shiftmetaright)
+	       ("C-j" . nil)))
 
       ;; ;; commented because it's not in the package registries right now :(
       (use-package org-roam
 	:requires org
 	:hook
 	(emacs-startup-hook . org-roam-mode)
+	:config
+	(setq org-roam-dailies-capture-templates
+	      '(("d" "daily" plain (function org-roam-capture--get-point)
+		 ""
+		 :immediate-finish t
+		 :file-name "%<%Y-%m-%d>"
+		 :head "#+TITLE: %<%Y-%m-%d>
+
+      ,* Notes
+      ,** Uncategorized
+
+      ,* TODOs")))
 	:bind (:map my-keys-mode-map
 		    ("C-c o t" . org-roam-dailies-today)
 		    ("C-c o c" . org-roam-capture)
@@ -302,6 +314,9 @@ an attempt to get it documented and in one place.
 	:config
 	(setq tramp-default-method "ssh")
 	(customize-set-variable 'tramp-syntax 'simplified))
+
+      ;; more info here if i need to expand: https://github.com/efiivanir/.emacs.d/blob/a3f705714cc00f1fe2905a2ceaa99d9e97b8e600/settings/treemacs-settings.el
+      (use-package treemacs)
 
       (use-package yaml-mode
 	:mode ("\\.yaml\\'" "\\.yml\\'"))
@@ -410,6 +425,7 @@ an attempt to get it documented and in one place.
 
     (let ((m my-keys-mode-map))
       (define-key m (kbd "C-t")   'comment-or-uncomment-region)
+      (define-key m (kbd "C-S-T") (lambda () (interactive) (org-agenda)))
       (define-key m (kbd "M-P")   'package-list-packages)
       (define-key m (kbd "M-E")   'el-get-list-packages)
       (define-key m (kbd "M-S")   'eshell)
@@ -442,9 +458,10 @@ an attempt to get it documented and in one place.
 	    (async-shell-command
 	     (concat
 	      "'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --remote-debugging-port=9222 "
-	      (read-string "url: "))))))
+	      "'" (read-string "url: ") "'")))))
 
       ;; opens url
+      ;; TODO doesn't work
       (define-key m (kbd "C-c . c")
 	(lambda () (interactive)
 	  (browse-url (read-string "url: "))))
@@ -454,7 +471,6 @@ an attempt to get it documented and in one place.
 	(lambda () (interactive)
 	  (async-shell-command
 	   (concat
-	    ;; FIXME
 	    "'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' "
 	    "--profile-directory='Profile 2' "
 	    "'https://www.facebook.com/groups/565308257695776/post_tags/?post_tag_id=566705834222685' "
